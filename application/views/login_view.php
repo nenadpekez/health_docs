@@ -29,7 +29,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                                     <h4 class="text-start 1text-primary text-info"><?php echo $this->app_title; ?></h4>
                                     <hr>
-                                    <h4 class="text-right">Prijava commit</h4>
+                                    <h4 class="text-right">Prijava commit opet</h4>
 
                                 </div>
 
