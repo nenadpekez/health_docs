@@ -170,7 +170,7 @@ if ( ! function_exists('generateForm'))
 		$ci = &get_instance();
         $controller = $ci->router->fetch_class();
         $method = $ci->router->fetch_method();
-        file_put_contents(FCPATH . "debug.log", "--- file ".__FILE__." | function ".__FUNCTION__." ln ".__LINE__." ---\n data for process\n".print_r($data,1), FILE_APPEND);
+        //file_put_contents(FCPATH . "debug.log", "--- file ".__FILE__." | function ".__FUNCTION__." ln ".__LINE__." ---\n data for process\n".print_r($data,1), FILE_APPEND);
 
         $form = $data['form'];
         $fields = $data['fields'];

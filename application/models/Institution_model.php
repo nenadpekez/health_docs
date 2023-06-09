@@ -151,7 +151,7 @@ class Institution_model extends CI_Model {
         $sql = sprintf("SELECT 
                     institution_id as institution_id
                 FROM institution
-                WHERE MD5(uid)=%s"
+                WHERE uid=%s"
                 ,$this->db->escape($uid)
             );
         $res = $this->db->query($sql);
@@ -170,12 +170,12 @@ class Institution_model extends CI_Model {
 
     function update($data)
     {
-        
         $id = $this->get_id_by_uid($data['uid']);
         if(!$id) {
             file_put_contents(FCPATH . "debug.log", "--- file ".__FILE__." | function ".__FUNCTION__." ln ".__LINE__." ---\n"."check user uid returned FALSE", FILE_APPEND);
             return false;
         }
+        //$id = $data['id'];
         //update
         $sql = sprintf("UPDATE institution SET
                     `name`=%s
@@ -203,6 +203,7 @@ class Institution_model extends CI_Model {
             ,$this->db->escape(date('Y-m-d H:i:s'))
             ,$id
         );
+        file_put_contents(FCPATH . "debug.log", "\n\nSQL\n --- file ".__FILE__." | function ".__FUNCTION__." ln ".__LINE__." ---\n".$sql."\n\n", FILE_APPEND);
         $res = $this->db->query($sql);
         if(is_array($res) && isset($res['code']) && $res['code'] != 0) {
             file_put_contents(FCPATH . "debug.log", "\n\nREPORTING DB ERROR\n --- file ".__FILE__." | function ".__FUNCTION__." ln ".__LINE__." ---\n".print_r($res,1)."\n\n", FILE_APPEND);

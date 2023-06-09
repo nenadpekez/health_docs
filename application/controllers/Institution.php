@@ -72,6 +72,7 @@ class Institution extends CI_Controller {
             //$this->load->model(strtolower(get_class()).'_model', 'db_model');
             $this->load->model('Data_model', 'db_model');
             $data = $this->db_model->get_form_data(strtolower(get_class()), $id);
+            //file_put_contents(FCPATH . "debug.log", "--- file ".__FILE__." | function ".__FUNCTION__." ln ".__LINE__." ---\n result from model\n".print_r($data,1), FILE_APPEND);
             $data['form']->form_action= base_url() . strtolower(get_class()) . "/update";
             $this->data['table_data'] = generateForm($data);
             

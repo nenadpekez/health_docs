@@ -117,7 +117,7 @@ class Users_model extends CI_Model {
                 FROM users u
                 LEFT JOIN users_data ud ON ud.user_id = u.user_id
                 LEFT JOIN departments d ON d.department_id = ud.department_id
-                WHERE u.user_uid=%s"
+                WHERE u.user_id=%s"
                 ,$this->db->escape($id)
             );
         $res = $this->db->query($sql);
@@ -125,7 +125,8 @@ class Users_model extends CI_Model {
             file_put_contents(FCPATH . "debug.log", "\n\nREPORTING DB ERROR\n --- file ".__FILE__." | function ".__FUNCTION__." ln ".__LINE__." ---\n".print_r($res,1)."\n\n", FILE_APPEND);
             return false;
         }
-        //file_put_contents(FCPATH . "debug.log", "--- file ".__FILE__." | function ".__FUNCTION__." ln ".__LINE__." ---\n".print_r($res->row(),1), FILE_APPEND);
+        //file_put_contents(FCPATH . "debug.log", "\n\n--- file ".__FILE__." | function ".__FUNCTION__." ln ".__LINE__." ---\n".$sql, FILE_APPEND);
+        //file_put_contents(FCPATH . "debug.log", "\n\n--- file ".__FILE__." | function ".__FUNCTION__." ln ".__LINE__." ---\n".print_r($res->row(),1), FILE_APPEND);
         return $res->row();
     }
 
@@ -134,15 +135,17 @@ class Users_model extends CI_Model {
         $sql = sprintf("SELECT 
                     user_id as user_id
                 FROM users
-                WHERE MD5(user_uid)=%s"
+                WHERE user_uid=%s OR md5(user_uid)=%s"
+                ,$this->db->escape($uid)
                 ,$this->db->escape($uid)
             );
+        //file_put_contents(FCPATH . "debug.log", "\n\n--- file ".__FILE__." | function ".__FUNCTION__." ln ".__LINE__." ---\n".$sql, FILE_APPEND);
         $res = $this->db->query($sql);
         if(is_array($res) && isset($res['code']) && $res['code'] != 0) {
             file_put_contents(FCPATH . "debug.log", "\n\nREPORTING DB ERROR\n --- file ".__FILE__." | function ".__FUNCTION__." ln ".__LINE__." ---\n".print_r($res,1)."\n\n", FILE_APPEND);
             return false;
         }
-        //file_put_contents(FCPATH . "debug.log", "--- file ".__FILE__." | function ".__FUNCTION__." ln ".__LINE__." ---\n".print_r($res->row(),1), FILE_APPEND);
+        //file_put_contents(FCPATH . "debug.log", "\n\n--- file ".__FILE__." | function ".__FUNCTION__." ln ".__LINE__." ---\n".print_r($res->row(),1), FILE_APPEND);
         $row = $res->row();
         if ($res->num_rows() == 0) {
             return false;
@@ -161,7 +164,7 @@ class Users_model extends CI_Model {
         */
         $user_id = $this->get_user_id_by_uid($user['user_uid']);
         if(!$user_id) {
-            file_put_contents(FCPATH . "debug.log", "--- file ".__FILE__." | function ".__FUNCTION__." ln ".__LINE__." ---\n"."check user uid returned FALSE", FILE_APPEND);
+            file_put_contents(FCPATH . "debug.log", "\n\n--- file ".__FILE__." | function ".__FUNCTION__." ln ".__LINE__." ---\n"."check user uid returned FALSE", FILE_APPEND);
             return false;
         }
         //update user
@@ -177,7 +180,7 @@ class Users_model extends CI_Model {
             ,$user['user_status']
             ,$user['user_id']
         );
-        file_put_contents(FCPATH . "debug.log", "\n\nSQL\n --- file ".__FILE__." | function ".__FUNCTION__." ln ".__LINE__." ---\n".print_r($sql,1)."\n\n", FILE_APPEND);
+        //file_put_contents(FCPATH . "debug.log", "\n\nSQL\n --- file ".__FILE__." | function ".__FUNCTION__." ln ".__LINE__." ---\n".print_r($sql,1)."\n\n", FILE_APPEND);
         $res = $this->db->query($sql);
         if(is_array($res) && isset($res['code']) && $res['code'] != 0) {
             file_put_contents(FCPATH . "debug.log", "\n\nREPORTING DB ERROR\n --- file ".__FILE__." | function ".__FUNCTION__." ln ".__LINE__." ---\n".print_r($res,1)."\n\n", FILE_APPEND);
@@ -185,11 +188,12 @@ class Users_model extends CI_Model {
         }
         if(isset($user['user_password']) && $user['user_password'] != '') {
             $sql = sprintf("UPDATE users SET
-                        user_password=%s
+                        user_password=md5(%s)
                     WHERE user_id=%d"
-                ,$this->db->escape(md5($user['user_password']))
-                ,$user_id
+                ,$this->db->escape($user['user_password'])
+                ,$user['user_id']
             );
+            //file_put_contents(FCPATH . "debug.log", "\n\nSQL\n --- file ".__FILE__." | function ".__FUNCTION__." ln ".__LINE__." ---\n".print_r($sql,1)."\n\n", FILE_APPEND);
             $res = $this->db->query($sql);
         }
 
@@ -236,7 +240,7 @@ class Users_model extends CI_Model {
             ,$this->db->escape(md5($user['username'] . '|' . $user['password'] . DB_SALT . time()))
             ,$this->db->escape($user['username'])
             ,$this->db->escape(md5($user['password']))
-            ,($user['level']) ? $user['level'] : 0
+            ,($user['level']) ? $user['level'] : 2
         );
         $res = $this->db->query($sql);
         if(is_array($res) && isset($res['code']) && $res['code'] != 0) {
